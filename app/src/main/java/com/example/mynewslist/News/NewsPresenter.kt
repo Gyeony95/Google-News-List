@@ -14,10 +14,13 @@ class NewsPresenter: NewsContract.Presenter {
     override lateinit var view: NewsContract.View
     override lateinit var mContext: Context
     private val TAG = "NewsPresenter"
+    var topic = arrayListOf<String>()
+
+
 
     //아이템 불러오기
     override fun loadItems(list: ArrayList<NewsModel>, adapter: NewsAdapter) {
-        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko")
+        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",adapter)
         val mDoc = okx.execute().get()
 
         val itemNodeList = mDoc!!.getElementsByTagName("item")
@@ -33,67 +36,36 @@ class NewsPresenter: NewsContract.Presenter {
             //Anko라이브러리로 비동기 처리
             doAsync {
                 val mDoc2 = Jsoup.connect(url).get()
-                //Log.e("mDoc2","mDoc2 = "+mDoc2)
-
                 //아이템 추가
-                val mImage = mDoc2.select("meta[property=og:image]").get(0).attr("content")
-                val mScript = mDoc2.select("meta[property=og:description]").get(0).attr("content")
-                var firstTopic = "xxx"
-                var secondTopic = "xxx"
-                var thirdTopic = "xxx"
-                var strArr = mScript.split(" ")
+                val mImage = mDoc2.select("meta[property=og:image]").get(0).attr("content")//이미지주소 얻어옴
+                val mScript = mDoc2.select("meta[property=og:description]").get(0).attr("content")//본문일부 얻어옴
+                var strArr = mScript.split(" ")//공백기준으로 문자열 나눔
                 var firstHm = HashMap<String, Int>() //해시맵선언
 
+                //단어별로 출연빈도를 해시맵에 저장함
                 for (i in 0 until strArr.size) {
                     if(!strArr.get(i).equals("")){
                         val count = firstHm.getOrDefault(strArr.get(i), 0) //해시맵에 단어가 등록되어있지 않으면 0
                         firstHm[strArr.get(i)] = count + 1 //처음등록이면 1 두번째등록이면 2 이렇게 중복체크를해줌
                     }
                 }
-
-
-
-                var largeNum = 0
-                Collections.sort(strArr)
-                largeNum = getLargeNum(firstHm, largeNum, strArr)
-                for (i in 0 until strArr.size) {
-                    if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
-                        firstTopic = strArr.get(i)
-                        firstHm[strArr.get(i)] = -1
-                        largeNum = 0
-                    }
+                var largeNum = 0//출연빈도
+                Collections.sort(strArr)//오름차순정렬
+                for(i in 0..3){//3회 반복
+                    largeNum = getLargeNum(firstHm, largeNum, strArr)//가장 출연빈도가 높은 수를 얻어옴
+                    firstHm = getKeyWord(firstHm, largeNum, strArr)
+                    largeNum = 0
                 }
 
-
-
-                largeNum = getLargeNum(firstHm, largeNum, strArr)
-                for (i in 0 until strArr.size) {
-                    if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
-                        secondTopic = strArr.get(i)
-                        firstHm[strArr.get(i)] = -1
-                        largeNum = 0
-                    }
-                }
-
-
-                largeNum = getLargeNum(firstHm, largeNum, strArr)
-                for (i in 0 until strArr.size) {
-                    if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
-                        thirdTopic = strArr.get(i)
-                        firstHm[strArr.get(i)] = -1
-                        largeNum = 0
-                    }
-                }
-
-                adapter.addItem(NewsModel(mImage, title, mScript, firstTopic, secondTopic, thirdTopic, url))
-
+                adapter.addItem(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
+                topic.clear()
                 view.refresh()
                 adapter.notifyDataSetChanged()
+
             }
         }
-
     }
-
+    //가장 출연빈도가 높은 수를 얻어옴
     fun getLargeNum(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):Int{
         for (i in 0 until strArr.size) {
             if(firstHm.getOrDefault(strArr.get(i), 0) > largeNum){
@@ -102,30 +74,17 @@ class NewsPresenter: NewsContract.Presenter {
         }
         return 0
     }
-
-
-/*
-    fun test(participant:ArrayList<String>, completion:ArrayList<String>):String{
-        var result = ""
-        val completionHm = HashMap<String, Int>() //해시맵선언
-
-        for (i in 0 until completion.size) { //완주자를 모두 해시맵에 넣어놓음
-            val count = completionHm.getOrDefault(completion.get(i), 0) //동명이인 카운트, 해시맵에 완주자가 등록되어있지 않으면 0
-            completionHm[completion.get(i)] = count + 1 //처음등록이면 1 두번째등록이면 2 이렇게 중복체크를해줌
-        }
-
-        for (i in 0 until participant.size) { //참가자 길이만큼 반복
-            if (completionHm.getOrDefault(participant.get(i), 0) === 0) { //완주자목록에 없으면 0을반환하고 그즉시 리턴
-                result = participant.get(i)
-                return result
-            } else { //완주자목록에 있을시 동명이인 카운트를 하나씩 줄여가며 다시 put해줌(덮어쓰기)
-                completionHm[participant.get(i)] = completionHm[participant.get(i)]!! - 1
+    //가장 출연빈도가 높은걸 topic배열에 저장하고 value를 -1로 바꿔서 제일 뒤로보냄
+    fun getKeyWord(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):HashMap<String, Int>{
+        for (i in 0 until strArr.size) {
+            if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
+                topic.add(strArr.get(i))
+                firstHm[strArr.get(i)] = -1
             }
         }
-
-        return result
+        //출연빈도 높은거 뒤로보낸 해시맵을 리턴
+        return firstHm
     }
-*/
 
 }
 

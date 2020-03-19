@@ -6,6 +6,7 @@ import android.webkit.WebSettings
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.appcompat.app.AppCompatActivity
+import kotlinx.android.synthetic.main.activity_web_post.*
 
 
 class WebPostActivity : AppCompatActivity() {
@@ -14,7 +15,6 @@ class WebPostActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_web_post)
 
-        // 웹뷰 시작
         // 웹뷰 시작
         val post_web_view = findViewById(R.id.post_web_view) as WebView
         post_web_view.setWebViewClient(WebViewClient()) // 클릭시 새창 안뜨게
@@ -30,8 +30,12 @@ class WebPostActivity : AppCompatActivity() {
         mWebSettings.setCacheMode(WebSettings.LOAD_NO_CACHE) // 브라우저 캐시 허용 여부
         mWebSettings.setDomStorageEnabled(true) // 로컬저장소 허용 여부
 
-        var intent = intent
+        //뷰에 값 셋팅해주는 부분
+        val intent = intent
         post_web_view.loadUrl(intent.getStringExtra("news_url")) // 웹뷰에 표시할 웹사이트 주소, 웹뷰 시작
-
+        post_title.setText(intent.getStringExtra("news_title"))
+        post_first_topic.setText(intent.getStringExtra("news_topic_1"))
+        post_second_topic.setText(intent.getStringExtra("news_topic_2"))
+        post_third_topic.setText(intent.getStringExtra("news_topic_3"))
     }
 }

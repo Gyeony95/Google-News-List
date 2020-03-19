@@ -17,17 +17,8 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
     RecyclerView.Adapter<NewsAdapter.Holder>(){
 
     fun addItem(item: NewsModel) {//아이템 추가
-        if (arrayList != null) {//널체크 해줘야함
-            arrayList.add(item)
-
-        }
+        arrayList.add(item)
     }
-
-    fun removeAt(position: Int) {
-        arrayList.removeAt(position)
-        notifyItemRemoved(position)
-    }
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_news, parent, false)
@@ -40,7 +31,6 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.bind(arrayList[position], context)
-
     }
 
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -51,13 +41,12 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
         val news_first_topic = itemView.findViewById<TextView>(R.id.news_first_topic)
         val news_second_topic = itemView.findViewById<TextView>(R.id.news_second_topic)
         val news_third_topic = itemView.findViewById<TextView>(R.id.news_third_topic)
-
         val news_image = itemView.findViewById<ImageView>(R.id.news_image)
 
 
         fun bind(news_list: NewsModel, context: Context) {
 
-
+            //각 아이템에 값을 넣어주는 부분
             news_title.text = news_list.newsTitle
             news_script.text = news_list.newsScript
             news_first_topic.text = news_list.firstKeyward
@@ -65,11 +54,15 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
             news_third_topic.text = news_list.thirdKeyward
             Picasso.get().load(news_list.newsImage).into(news_image)
 
-
             //뉴스 상세보기 화면으로 이동
             itemView.setOnClickListener {
+                //필요한 정보들을 인텐트로 넘겨줌
                 val intent = Intent(context, WebPostActivity::class.java)
                 intent.putExtra("news_url", news_list.newsURL)
+                intent.putExtra("news_title", news_list.newsTitle)
+                intent.putExtra("news_topic_1", news_list.firstKeyward)
+                intent.putExtra("news_topic_2", news_list.secondKeyward)
+                intent.putExtra("news_topic_3", news_list.thirdKeyward)
                 context.startActivity(intent)
             }
 

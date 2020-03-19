@@ -8,14 +8,18 @@
     tools:context=".WebPostActivity">
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/post_title"
+        android:layout_margin="10dp"
+        android:textSize="19dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="제에ㅔㅔ목" />
+        android:text="제에ㅔㅔ목"
+        android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:orientation="horizontal">
 
         <TextView
