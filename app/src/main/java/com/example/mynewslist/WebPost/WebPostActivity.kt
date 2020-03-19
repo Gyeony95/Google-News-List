@@ -31,7 +31,6 @@ class WebPostActivity : AppCompatActivity() {
         mWebSettings.setDomStorageEnabled(true) // 로컬저장소 허용 여부
 
         var intent = intent
-        Log.e("asd",intent.getStringExtra("news_url"))
         post_web_view.loadUrl(intent.getStringExtra("news_url")) // 웹뷰에 표시할 웹사이트 주소, 웹뷰 시작
 
     }

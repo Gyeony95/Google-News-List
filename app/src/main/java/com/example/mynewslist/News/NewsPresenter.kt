@@ -38,12 +38,12 @@ class NewsPresenter: NewsContract.Presenter {
                 Log.e("mDoc2","mDoc2 = "+mDoc2)
 
                 //아이템 추가
-                var mImage = mDoc2.select("meta[property=og:image]").get(0).attr("content")
-                var mScript = mDoc2.select("meta[property=og:description]").get(0).attr("content")
+                val mImage = mDoc2.select("meta[property=og:image]").get(0).attr("content")
+                val mScript = mDoc2.select("meta[property=og:description]").get(0).attr("content")
                 //Log.e("mImage",mImage)
                 //Log.e("mScript",mScript)
                 adapter.addItem(NewsModel(mImage, title, mScript, "123", "456", "789", url))
-                adapter.notifyDataSetChanged()
+                view.refresh()
             }
         }
 

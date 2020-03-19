@@ -2,14 +2,19 @@ package com.example.mynewslist.News
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mynewslist.*
 import kotlinx.android.synthetic.main.activity_news.*
 
 class NewsActivity : AppCompatActivity(),
-    NewsContract.View {
+    NewsContract.View, SwipeRefreshLayout.OnRefreshListener {
     private val TAG = "NewsActivity"
-    internal lateinit var presenter: NewsPresenter
+    internal var presenter: NewsPresenter = NewsPresenter().apply {
+        view = this@NewsActivity
+        mContext = this@NewsActivity
+    }
     var arrayList = arrayListOf<NewsModel>()
     val mAdapter = NewsAdapter(this, arrayList)
 
@@ -25,16 +30,22 @@ class NewsActivity : AppCompatActivity(),
         news_recyclerview.layoutManager = lm
         news_recyclerview.setHasFixedSize(true)//아이템이 추가삭제될때 크기측면에서 오류 안나게 해줌
 
-        presenter = NewsPresenter().apply {
-            view = this@NewsActivity
-            mContext = this@NewsActivity
-        }
         presenter.loadItems(arrayList, mAdapter)
 
+        swipe_layout.setOnRefreshListener { onRefresh() }
     }
 
-    //새로고침
+    //리사이클러뷰 새로고침
     override fun refresh() {
         mAdapter.notifyDataSetChanged()
+        if(swipe_layout.isRefreshing){
+            swipe_layout.isRefreshing = false
+        }
+    }
+
+    //당겨서 새로고침
+    override fun onRefresh() {
+        arrayList.clear()
+        presenter.loadItems(arrayList, mAdapter)
     }
 }

@@ -45,4 +45,8 @@ dependencies {
 
     implementation 'org.jsoup:jsoup:1.12.1'
     implementation 'org.jetbrains.anko:anko:0.10.5'
+
+    implementation 'com.android.support:support-v4:29.0.2'
+
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 }
