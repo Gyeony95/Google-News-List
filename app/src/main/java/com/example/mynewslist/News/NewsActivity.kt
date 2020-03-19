@@ -3,6 +3,7 @@ package com.example.mynewslist.News
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mynewslist.*
@@ -37,10 +38,10 @@ class NewsActivity : AppCompatActivity(),
 
     //리사이클러뷰 새로고침
     override fun refresh() {
-        mAdapter.notifyDataSetChanged()
         if(swipe_layout.isRefreshing){
             swipe_layout.isRefreshing = false
         }
+
     }
 
     //당겨서 새로고침
