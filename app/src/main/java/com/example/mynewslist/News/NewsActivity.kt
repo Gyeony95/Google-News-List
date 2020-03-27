@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.example.mynewslist.R
+import com.tuesda.walker.circlerefresh.CircleRefreshLayout.OnCircleRefreshListener
 import kotlinx.android.synthetic.main.activity_news.*
 
 
@@ -18,7 +19,7 @@ class NewsActivity : AppCompatActivity(),
     }
     var arrayList = arrayListOf<NewsModel>()//아이템에 들어갈 어레이리스트
     var mAdapter = NewsAdapter(this, arrayList)//리사이클러뷰 어댑터
-
+    var isLoading = false//로딩중인지?
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,7 +41,18 @@ class NewsActivity : AppCompatActivity(),
                 news_recyclerview.setHasFixedSize(true)
                 //아이템 불러오기
                 //스와이프 레이아웃 설정
-                swipe_layout.setOnRefreshListener { onRefresh() }
+                //swipe_layout.setOnRefreshListener { onRefresh() }
+                swipe_layout.setOnRefreshListener(
+                    object : OnCircleRefreshListener {
+                        override fun refreshing() { // do something when refresh starts
+                            onRefresh()
+                            isLoading = true
+                        }
+
+                        override fun completeRefresh() { // do something when refresh complete
+                            isLoading = false
+                        }
+                    })
             }
         }).start()
 
@@ -50,12 +62,10 @@ class NewsActivity : AppCompatActivity(),
     }
 
     override fun refresh() {
-        if(swipe_layout.isRefreshing){
-            swipe_layout.isRefreshing = false
-            Log.e("asdasd","1")
+        if(isLoading){
+            isLoading = false
+            swipe_layout.finishRefreshing()
         }else{
-            Log.e("asdasd","2")
-
         }
 
     }

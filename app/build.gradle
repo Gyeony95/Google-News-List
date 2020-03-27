@@ -8,7 +8,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.mynewslist"
-        minSdkVersion 24
+        minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -50,5 +50,6 @@ dependencies {
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
 
+    implementation project(':circlerefresh')
 
 }

@@ -1,2 +1,3 @@
 rootProject.name='MyNewsList'
 include ':app'
+include ':circlerefresh'
