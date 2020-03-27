@@ -6,13 +6,18 @@ import android.os.AsyncTask
 import android.util.Log
 import android.widget.Toast
 import com.example.mynewslist.News.NewsAdapter
+import com.example.mynewslist.News.NewsModel
+import org.jetbrains.anko.doAsync
+import org.jetbrains.anko.uiThread
+import org.jsoup.Jsoup
 import org.w3c.dom.Document
 import org.w3c.dom.Element
 import org.xml.sax.InputSource
 import java.net.URL
+import java.util.*
 import javax.xml.parsers.DocumentBuilderFactory
 
-class XmlParser(var mContext: Context, var mUrl:String, var mAdapter:NewsAdapter) :
+class XmlParser(var mContext: Context, var mUrl:String,var  adapter: NewsAdapter) :
     AsyncTask<String?, Void?, Document?>() {
 
     var asyncDialog:ProgressDialog = ProgressDialog(mContext)
@@ -54,7 +59,11 @@ class XmlParser(var mContext: Context, var mUrl:String, var mAdapter:NewsAdapter
             Log.e("title", title)
         }
         */
+
+
     }
+
+
 
 
 }

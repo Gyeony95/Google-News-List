@@ -7,7 +7,7 @@ import org.jetbrains.anko.doAsync
 import org.jsoup.Jsoup
 import org.w3c.dom.Element
 import java.util.*
-import kotlin.collections.HashMap
+import java.util.Collections.sort
 
 
 class NewsPresenter: NewsContract.Presenter {
@@ -20,11 +20,11 @@ class NewsPresenter: NewsContract.Presenter {
 
     //아이템 불러오기
     override fun loadItems(list: ArrayList<NewsModel>, adapter: NewsAdapter) {
-        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",adapter)
+        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",adapter)//뉴스 주소
         val mDoc = okx.execute().get()
 
         val itemNodeList = mDoc!!.getElementsByTagName("item")
-        for (i in 0 until itemNodeList.length) {
+        for (i in 0 until itemNodeList.length) {//아이템그룹의 수만큼 반복
             val node = itemNodeList.item(i)
             val element = node as Element
             val titleNodeList = element.getElementsByTagName("title")
@@ -44,27 +44,32 @@ class NewsPresenter: NewsContract.Presenter {
 
                 //단어별로 출연빈도를 해시맵에 저장함
                 for (i in 0 until strArr.size) {
-                    if(!strArr.get(i).equals("")){
+                    if(strArr.get(i).length >= 2){//길이가 2 이상일때
                         val count = firstHm.getOrDefault(strArr.get(i), 0) //해시맵에 단어가 등록되어있지 않으면 0
                         firstHm[strArr.get(i)] = count + 1 //처음등록이면 1 두번째등록이면 2 이렇게 중복체크를해줌
                     }
                 }
                 var largeNum = 0//출연빈도
-                Collections.sort(strArr)//오름차순정렬
+                sort(strArr)//오름차순정렬
                 for(i in 0..3){//3회 반복
                     largeNum = getLargeNum(firstHm, largeNum, strArr)//가장 출연빈도가 높은 수를 얻어옴
                     firstHm = getKeyWord(firstHm, largeNum, strArr)
                     largeNum = 0
                 }
-
-                adapter.addItem(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
+                //adapter.addItem(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
+                list.add(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
                 topic.clear()
-                view.refresh()
                 adapter.notifyDataSetChanged()
-
+                if( i == itemNodeList.length-1){//마지막이면
+                    view.setView()
+                }
             }
         }
     }
+
+
+
+
     //가장 출연빈도가 높은 수를 얻어옴
     fun getLargeNum(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):Int{
         for (i in 0 until strArr.size) {
@@ -78,7 +83,7 @@ class NewsPresenter: NewsContract.Presenter {
     fun getKeyWord(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):HashMap<String, Int>{
         for (i in 0 until strArr.size) {
             if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
-                topic.add(strArr.get(i))
+                topic.add(strArr.get(i).trim())//좌우공백제거하고 추가
                 firstHm[strArr.get(i)] = -1
             }
         }

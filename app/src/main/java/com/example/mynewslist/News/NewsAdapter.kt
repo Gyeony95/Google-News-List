@@ -18,6 +18,7 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
 
     fun addItem(item: NewsModel) {//아이템 추가
         arrayList.add(item)
+        notifyDataSetChanged()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
