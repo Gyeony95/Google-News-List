@@ -43,12 +43,14 @@ dependencies {
     //피카소
     implementation 'com.squareup.picasso:picasso:2.71828'
 
+    //jsoup
     implementation 'org.jsoup:jsoup:1.12.1'
+    //anko (비동기용)
     implementation 'org.jetbrains.anko:anko:0.10.5'
 
     implementation 'com.android.support:support-v4:29.0.2'
 
+    //스와이프 리사이클
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
-
 
 }

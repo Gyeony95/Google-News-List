@@ -6,6 +6,7 @@ import com.example.mynewslist.Network.XmlParser
 import org.jetbrains.anko.doAsync
 import org.jsoup.Jsoup
 import org.w3c.dom.Element
+import java.lang.Exception
 import java.util.*
 import java.util.Collections.sort
 
@@ -17,10 +18,9 @@ class NewsPresenter: NewsContract.Presenter {
     var topic = arrayListOf<String>()
 
 
-
     //아이템 불러오기
     override fun loadItems(list: ArrayList<NewsModel>, adapter: NewsAdapter) {
-        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko",adapter)//뉴스 주소
+        val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko")//뉴스 주소
         val mDoc = okx.execute().get()
 
         val itemNodeList = mDoc!!.getElementsByTagName("item")
@@ -45,8 +45,11 @@ class NewsPresenter: NewsContract.Presenter {
                 //단어별로 출연빈도를 해시맵에 저장함
                 for (i in 0 until strArr.size) {
                     if(strArr.get(i).length >= 2){//길이가 2 이상일때
-                        val count = firstHm.getOrDefault(strArr.get(i), 0) //해시맵에 단어가 등록되어있지 않으면 0
-                        firstHm[strArr.get(i)] = count + 1 //처음등록이면 1 두번째등록이면 2 이렇게 중복체크를해줌
+                        try{
+                            val count = firstHm.getOrDefault(strArr.get(i), 0) //해시맵에 단어가 등록되어있지 않으면 0
+                            firstHm[strArr.get(i)] = count + 1 //처음등록이면 1 두번째등록이면 2 이렇게 중복체크를해줌
+                        }catch (e:Exception){ }
+
                     }
                 }
                 var largeNum = 0//출연빈도
@@ -57,10 +60,15 @@ class NewsPresenter: NewsContract.Presenter {
                     largeNum = 0
                 }
                 //adapter.addItem(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
-                list.add(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
+                try{
+                    list.add(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
+                }catch(e:Exception){
+                    list.add(NewsModel(mImage, title, mScript, "예외1", "예외2", "예외3", url))
+                }
                 topic.clear()
-                adapter.notifyDataSetChanged()
                 if( i == itemNodeList.length-1){//마지막이면
+                    Log.e("itemNodeList",i.toString())
+                    Log.e("itemNodeList",itemNodeList.length.toString())
                     view.setView()
                 }
             }
@@ -90,6 +98,8 @@ class NewsPresenter: NewsContract.Presenter {
         //출연빈도 높은거 뒤로보낸 해시맵을 리턴
         return firstHm
     }
+
+
 
 }
 
