@@ -40,21 +40,9 @@ class XmlParser(var mContext: Context, var mUrl:String) :
         return doc
     }
 
-
     //후
     override fun onPostExecute(doc: Document?) {
         super.onPostExecute(doc)
-        /*
-        val itemNodeList = doc!!.getElementsByTagName("item")
-        for (i in 0 until itemNodeList.length) {
-            val node = itemNodeList.item(i)
-            val element = node as Element
-            val titleNodeList = element.getElementsByTagName("title")
-            val title = titleNodeList.item(0).childNodes.item(0).nodeValue
-            Log.e("title", title)
-        }
-        */
-
 
     }
 

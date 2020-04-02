@@ -20,20 +20,16 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
         arrayList.add(item)
         notifyDataSetChanged()
     }
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val view = LayoutInflater.from(context).inflate(R.layout.item_news, parent, false)
         return Holder(view)
     }
-
     override fun getItemCount(): Int {
         return arrayList.size
     }
-
     override fun onBindViewHolder(holder: Holder, position: Int) {
         holder.bind(arrayList[position], context)
     }
-
     inner class Holder(itemView: View) : RecyclerView.ViewHolder(itemView) {
 
         //모델의 변수들 정의하는부분
@@ -43,7 +39,6 @@ class NewsAdapter(val context: Context, val arrayList: ArrayList<NewsModel>):
         val news_second_topic = itemView.findViewById<TextView>(R.id.news_second_topic)
         val news_third_topic = itemView.findViewById<TextView>(R.id.news_third_topic)
         val news_image = itemView.findViewById<ImageView>(R.id.news_image)
-
 
         fun bind(news_list: NewsModel, context: Context) {
 

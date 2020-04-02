@@ -26,7 +26,6 @@ class NewsActivity : AppCompatActivity(),
         presenter.loadItems(arrayList,mAdapter)
         setView()
     }
-
     //뷰 설정
     override fun setView(){
         //리사이클러뷰 관련, 어댑터, 레이아웃매니저 설정
@@ -46,14 +45,11 @@ class NewsActivity : AppCompatActivity(),
         }
         refresh()
     }
-
     override fun refresh() {
         if(swipe_layout.isRefreshing){
             swipe_layout.isRefreshing = false
         }
-
     }
-
     //당겨서 새로고침
     override fun onRefresh() {
         try{
@@ -64,7 +60,5 @@ class NewsActivity : AppCompatActivity(),
         }catch (e:Exception){
             Log.e(TAG,e.message)
         }
-
     }
-
 }

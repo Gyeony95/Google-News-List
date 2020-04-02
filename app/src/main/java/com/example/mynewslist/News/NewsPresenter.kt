@@ -10,19 +10,16 @@ import java.lang.Exception
 import java.util.*
 import java.util.Collections.sort
 
-
 class NewsPresenter: NewsContract.Presenter {
     override lateinit var view: NewsContract.View
     override lateinit var mContext: Context
     private val TAG = "NewsPresenter"
     var topic = arrayListOf<String>()
 
-
     //아이템 불러오기
     override fun loadItems(list: ArrayList<NewsModel>, adapter: NewsAdapter) {
         val okx: XmlParser = XmlParser(mContext,"https://news.google.com/rss?hl=ko&gl=KR&ceid=KR:ko")//뉴스 주소
         val mDoc = okx.execute().get()
-
         val itemNodeList = mDoc!!.getElementsByTagName("item")
         for (i in 0 until itemNodeList.length) {//아이템그룹의 수만큼 반복
             val node = itemNodeList.item(i)
@@ -59,7 +56,6 @@ class NewsPresenter: NewsContract.Presenter {
                     firstHm = getKeyWord(firstHm, largeNum, strArr)
                     largeNum = 0
                 }
-                //adapter.addItem(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
                 try{
                     list.add(NewsModel(mImage, title, mScript, topic[0], topic[1], topic[2], url))
                 }catch(e:Exception){
@@ -74,33 +70,30 @@ class NewsPresenter: NewsContract.Presenter {
             }
         }
     }
-
-
-
-
     //가장 출연빈도가 높은 수를 얻어옴
     fun getLargeNum(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):Int{
         for (i in 0 until strArr.size) {
-            if(firstHm.getOrDefault(strArr.get(i), 0) > largeNum){
-                return firstHm.getOrDefault(strArr.get(i), 0)
-            }
+            try{
+                if(firstHm.getOrDefault(strArr.get(i), 0) > largeNum){
+                    return firstHm.getOrDefault(strArr.get(i), 0)
+                } }catch (e:Exception){ }
+
         }
         return 0
     }
     //가장 출연빈도가 높은걸 topic배열에 저장하고 value를 -1로 바꿔서 제일 뒤로보냄
     fun getKeyWord(firstHm:HashMap<String, Int>,largeNum:Int, strArr: List<String>):HashMap<String, Int>{
         for (i in 0 until strArr.size) {
-            if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
-                topic.add(strArr.get(i).trim())//좌우공백제거하고 추가
-                firstHm[strArr.get(i)] = -1
-            }
+            try{
+                if(firstHm.getOrDefault(strArr.get(i), 0) == largeNum){
+                    topic.add(strArr.get(i).trim())//좌우공백제거하고 추가
+                    firstHm[strArr.get(i)] = -1
+                } }catch (e:Exception){ }
+
         }
         //출연빈도 높은거 뒤로보낸 해시맵을 리턴
         return firstHm
     }
-
-
-
 }
 
 
